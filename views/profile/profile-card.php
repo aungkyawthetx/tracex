@@ -1,7 +1,7 @@
 <div class="bg-white rounded-xl shadow-sm p-8">
   <div class="flex flex-col lg:flex-row items-start lg:items-center gap-8">
     <!-- Profile Image Section -->
-    <div class="flex-shrink-0 text-center lg:text-left">
+    <div class="shrink-0 text-center lg:text-left">
       <div class="relative inline-block">
         <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff&size=128" alt="Profile" class="w-32 h-32 rounded-full shadow-lg">
       </div>

@@ -79,7 +79,7 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <div class="shrink-0 h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center">
                                 <i class="fas fa-lightbulb text-yellow-600"></i>
                             </div>
                             <div class="ml-4">
@@ -101,7 +101,7 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                            <div class="shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
                                 <i class="fas fa-film text-purple-600"></i>
                             </div>
                             <div class="ml-4">
@@ -123,7 +123,7 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                            <div class="shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
                                 <i class="fas fa-shopping-bag text-green-600"></i>
                             </div>
                             <div class="ml-4">
