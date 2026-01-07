@@ -13,7 +13,7 @@
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="expense-modal-title">Edit expense</h3>
                         <div class="mt-2">
-                            <form id="expenseForm" method="POST" action="<?= url('public/expenses.php') ?>">
+                            <form id="editExpenseForm" method="POST" action="update_expense.php">
                                 <input type="hidden" name="edit_expense_id" id="edit_expense_id">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
@@ -47,7 +47,7 @@
                                     <div>
                                         <label for="edit_category" class="block text-sm font-medium text-gray-700">Category</label>
                                         <select id="edit_category" name="category_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm rounded-md cursor-pointer <?= isset($errors['category']) ? 'border-red-500' : '' ?>">
-                                            <option value="">Select Category</option>
+                                            <option value="">Category</option>
                                             <?php foreach($category_items as $item): ?>
                                                 <option value="<?= $item['id']?>"> <?= $item['name'] ?> </option>
                                             <?php endforeach ?>
@@ -87,8 +87,8 @@
             <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button 
                     type="submit" 
-                    name="btnSaveExpense" 
-                    form="expenseForm" 
+                    name="btnUpdateExpense" 
+                    form="editExpenseForm" 
                     class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm cursor-pointer">
                     Update Expense
                 </button>

@@ -36,7 +36,8 @@ function closeEditExpenseModal() {
     document.getElementById('editExpenseModal').classList.add('hidden');
 }
 
-function openDeleteExpenseModal() {
+function openDeleteExpenseModal(id) {
+    document.getElementById('delete-id').value = id;
     document.getElementById('deleteExpenseModal').classList.remove('hidden');
 }
 

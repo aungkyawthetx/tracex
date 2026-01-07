@@ -46,7 +46,7 @@
                                     <div>
                                         <label for="categoty" class="block text-sm font-medium text-gray-700">Category</label>
                                         <select id="categoty" name="category_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm rounded-md cursor-pointer <?= isset($errors['category']) ? 'border-red-500' : '' ?>">
-                                            <option value="">Select Category</option>
+                                            <option value="">Category</option>
                                             <?php foreach($category_items as $item): ?>
                                                 <option value="<?= $item['id']?>"> <?= $item['name'] ?> </option>
                                             <?php endforeach ?>
@@ -58,7 +58,7 @@
                                     <div>
                                         <label for="payment_method" class="block text-sm font-medium text-gray-700">Payment Method</label>
                                         <select id="payment_method" name="payment_method" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm rounded-md cursor-pointer <?= isset($errors['payment_method']) ? 'border-red-500' : '' ?>">
-                                            <option value=""> Payment method</option>
+                                            <option value=""> Payment Method</option>
                                             <?php foreach ($options as $method): ?>
                                                 <option value="<?= $method ?>"><?= ucwords(str_replace('_', ' ', $method)) ?></option>
                                             <?php endforeach; ?>

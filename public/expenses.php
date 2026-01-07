@@ -1,16 +1,10 @@
 <?php
-  include __DIR__ . '/../src/helpers/url.php';
+  require __DIR__ . '/../src/helpers/url.php';
+  require __DIR__ . '/../src/helpers/flash.php';
   require_once __DIR__ . '/../src/helpers/isLoggedIn.php';
   require_once __DIR__ . '/../src/bootstrap.php';
 
   $title = "Expenses - BudgetBoard";
-
-  // Initialize alert flags from session "flash" values
-  $showSuccessAlert = !empty($_SESSION['show_success_alert']);
-  unset($_SESSION['show_success_alert']);
-
-  $showErrorAlert = !empty($_SESSION['show_error_alert']);
-  unset($_SESSION['show_error_alert']);
 
   $stmt = $pdo->prepare("SELECT * FROM categories");
   $stmt->execute();
@@ -25,7 +19,7 @@
 
   $errors = [];
 
-  if($_SERVER['REQUEST_METHOD'] && $_SERVER['REQUEST_METHOD'] === 'POST') {
+  if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveExpense'])) {
     $expense_date = $_POST['expense_date'] ?? null;
     $amount = $_POST['amount'] ?? 0;
     $description = trim($_POST['description'] ?? '');
@@ -76,19 +70,19 @@
         $status,
         $note
       ]);
-      $_SESSION['show_success_alert'] = true;
+      setFlash('success', 'Expense has been added!');
       header("Location: expenses.php");
-      exit();
-    }
+      exit;
+    } 
     else {
-      $_SESSION['show_error_alert'] = true;
+      setFlash('error', 'Something went wrong!');
       header("Location: expenses.php");
-      exit();
+      exit;
     }
   }
 
   // fetch expenses with category color and icon
-  $stmt = $pdo->prepare("SELECT expenses.*, categories.name AS category_name, categories.color AS category_color FROM expenses LEFT JOIN categories ON expenses.category_id = categories.id");
+  $stmt = $pdo->prepare("SELECT expenses.*, categories.name AS category_name, categories.color AS category_color, categories.id AS category_id FROM expenses LEFT JOIN categories ON expenses.category_id = categories.id");
   $stmt->execute();
   $expenses = $stmt->fetchAll();
 
@@ -98,29 +92,34 @@
 ?>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
-  <?php include __DIR__ . '/../views/expenses/table.php'; ?>
-  <?php include __DIR__ . '/../views/components/pagination.php'; ?>
+  <?php
+    include __DIR__ . '/../views/expenses/table.php';
+    include __DIR__ . '/../views/components/pagination.php';
+  ?>
 </div>
 
-<?php include __DIR__ . '/../views/components/modals/add-expense-modal.php' ?>
-<?php include __DIR__ . '/../views/components/modals/edit-expense-modal.php' ?>
-<?php include __DIR__ . '/../views/components/modals/delete-expense-modal.php' ?>
-
 <?php
+  include __DIR__ . '/../views/components/modals/add-expense-modal.php';
+  include __DIR__ . '/../views/components/modals/edit-expense-modal.php';
+  include __DIR__ . '/../views/components/modals/delete-expense-modal.php';
   $content = ob_get_clean();
   include __DIR__ . '/../views/components/layout.php';
 ?>
 
-<script>
-  <?php if($showSuccessAlert): ?>
+<?php
+ $flash = getFlash();
+ if($flash):
+?>
+  <script>
     Swal.fire({
+      toast: true,
       position: "top-end",
-      icon: "success",
-      title: "Expense has been saved!",
+      icon: "<?= $flash['type'] ?>",
+      title: <?= json_encode($flash['message']) ?>,
       showConfirmButton: false,
-      timer: 1200,
+      timer: 1500,
       width: "500px",
-      // padding: "0.5rem"
+      timerProgressBar: true
     });
-  <?php endif; ?>
-</script>
+  </script>
+<?php endif; ?>

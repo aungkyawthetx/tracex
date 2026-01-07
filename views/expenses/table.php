@@ -93,14 +93,17 @@
                             data-date="<?= $expense['expense_date'] ?>"
                             data-amount="<?= $expense['amount'] ?>"
                             data-description="<?= $expense['description'] ?>"
-                            data-category="<?= $expense['category_name']?>"
+                            data-category="<?= $expense['category_id']?>"
                             data-payment-method="<?= $expense['payment_method'] ?>"
                             data-note="<?= $expense['note'] ?>"
                             data-status="<?= $expense['status'] ?>"
                             class="text-indigo-600 hover:text-indigo-900 cursor-pointer mr-3"> 
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button onclick="openDeleteExpenseModal()" class="text-red-600 hover:text-red-900 cursor-pointer"><i class="fas fa-trash"></i></button>
+                        <button onclick="openDeleteExpenseModal(<?= $expense['id'] ?>)"
+                            class="text-red-600 hover:text-red-900 cursor-pointer">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
             <?php endforeach ?>
