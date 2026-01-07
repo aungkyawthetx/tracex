@@ -71,12 +71,12 @@
         $note
       ]);
       setFlash('success', 'Expense has been added!');
-      header("Location: expenses.php");
+      header("Location: expense.php");
       exit;
     } 
     else {
       setFlash('error', 'Something went wrong!');
-      header("Location: expenses.php");
+      header("Location: expense.php");
       exit;
     }
   }

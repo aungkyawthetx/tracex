@@ -10,7 +10,7 @@
       ":id" => $id
     ]);
     setFlash('success', 'Expense has been deleted!');
-    header("Location: expenses.php");
+    header("Location: expense.php");
     exit;
   }
 

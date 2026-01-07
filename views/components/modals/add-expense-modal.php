@@ -13,7 +13,7 @@
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="expense-modal-title">Add New Expense</h3>
                         <div class="mt-2">
-                            <form id="expenseForm" method="POST" action="<?= url('public/expenses.php') ?>">
+                            <form id="expenseForm" method="POST" action="">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label for="expense_date" class="block text-sm font-medium text-gray-700">Date</label>

@@ -38,7 +38,7 @@
       ':id' => $id
     ]);
     setFlash('success', 'Expense has been updated!');
-    header("Location: expenses.php");
+    header("Location: expense.php");
     exit;
   }
 
