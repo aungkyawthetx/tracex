@@ -28,11 +28,26 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+                <?php
+                    $category_bg = [
+                        'utensils' => 'bg-red-100',
+                        'bus' => 'bg-blue-100',
+                        'film' => 'bg-purple-100',
+                        'lightbulb' => 'bg-yellow-100',
+                        'shopping-cart' => 'bg-rose-100',
+                        'heart' => 'bg-green-100',
+                        'graduation-cap' => 'bg-indigo-100',
+                        'plane' => 'bg-sky-100',
+                        'file-invoice-dollar' => 'bg-orange-100',
+                        'question' => 'bg-gray-100'
+                    ];
+                ?>
+
                 <?php foreach($categories as $category): ?>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                                <div class="shrink-0 h-10 w-10 rounded-full <?= $category_bg[$category['icon']] ?? 'bg-gray-100' ?> flex items-center justify-center">
                                     <i class="fa-solid fa-<?= $category['icon'] ?>" style="color: <?= $category['color'] ?>"></i>
                                 </div>
                                 <div class="ml-4">

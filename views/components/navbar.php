@@ -3,12 +3,6 @@
         <button class="text-gray-500 focus:outline-none md:hidden">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="relative mx-4 md:mx-0">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                <i class="fas fa-search text-gray-400"></i>
-            </span>
-            <input class="w-full py-2 pl-10 pr-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" type="search" placeholder="Search...">
-        </div>
     </div>
     
     <div class="flex items-center">

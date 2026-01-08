@@ -5,10 +5,8 @@
   require_once __DIR__ . '/../src/bootstrap.php';
   $title = "Categories - BudgetBoard";
 
-  $sql = $pdo->prepare("SELECT * FROM categories WHERE user_id = :user_id");
-  $sql->execute([
-    ':user_id' => $_SESSION['user_id']
-  ]);
+  $sql = $pdo->prepare("SELECT * FROM categories");
+  $sql->execute();
   $categories = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 

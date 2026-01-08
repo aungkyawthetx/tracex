@@ -6,15 +6,13 @@
 
   $title = "Expenses - BudgetBoard";
 
-  $stmt = $pdo->prepare("SELECT * FROM categories WHERE user_id = :user_id");
-  $stmt->execute([
-    ':user_id' => $_SESSION['user_id']
-  ]);
-  $category_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $category_stmt = $pdo->prepare("SELECT * FROM categories");
+  $category_stmt->execute();
+  $category_items = $category_stmt->fetchAll(PDO::FETCH_ASSOC);
   // get payment methods
-  $sql = $pdo->prepare("SHOW COLUMNS FROM expenses LIKE 'payment_method'");
-  $sql->execute();
-  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $payment_stmt = $pdo->prepare("SHOW COLUMNS FROM expenses LIKE 'payment_method'");
+  $payment_stmt->execute();
+  $row = $payment_stmt->fetch(PDO::FETCH_ASSOC);
   $type = $row['Type'];
   preg_match("/^enum\('(.*)'\)$/", $type, $matches);
   $options = explode("','", $matches[1]);
@@ -83,10 +81,49 @@
     }
   }
 
-  // fetch expenses with category color and icon
-  $stmt = $pdo->prepare("SELECT expenses.*, categories.name AS category_name, categories.color AS category_color, categories.id AS category_id FROM expenses LEFT JOIN categories ON expenses.category_id = categories.id");
-  $stmt->execute();
+  // fetch expenses
+  $sql = "SELECT expenses.*, 
+    categories.name AS category_name, 
+    categories.color AS category_color, 
+    categories.id AS category_id 
+    FROM expenses 
+    LEFT JOIN categories 
+    ON expenses.category_id = categories.id 
+    WHERE expenses.user_id = :user_id";
+  $params = [];
+  $date_range = $_GET['date_range'] ?? '';
+  $category_id = $_GET['category_id'] ?? '';
+  $min_amount = $_GET['min_amount'] ?? '';
+  $max_amount = $_GET['max_amount'] ?? '';
+
+  if(!empty($date_range)) {
+    [$startDate, $endDate] = explode(' to ', $date_range);
+    $sql .= " AND expense_date BETWEEN :start_date AND :end_date";
+    $params['start_date'] = $startDate;
+    $params['end_date']   = $endDate;
+  }
+
+  if (!empty($category_id)) {
+    $sql .= " AND category_id = :category_id";
+    $params['category_id'] = $category_id;
+  }
+
+  if ($min_amount !== null && $min_amount !== '') {
+    $sql .= " AND amount >= :min_amount";
+    $params['min_amount'] = $min_amount;
+  }
+
+  if ($max_amount !== null && $max_amount !== '') {
+    $sql .= " AND amount <= :max_amount";
+    $params['max_amount'] = $max_amount;
+  }
+
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute(['user_id' => $_SESSION['user_id']] + $params);
   $expenses = $stmt->fetchAll();
+
+
+
 
   ob_start();
   include __DIR__ . '/../views/expenses/header.php';
