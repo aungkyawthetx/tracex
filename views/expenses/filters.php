@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="flex items-end">
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition duration-150">
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-150">
                 <i class="fas fa-filter mr-2"></i> Apply Filters
             </button>
         </div>
