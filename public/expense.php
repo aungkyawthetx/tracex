@@ -6,8 +6,10 @@
 
   $title = "Expenses - BudgetBoard";
 
-  $stmt = $pdo->prepare("SELECT * FROM categories");
-  $stmt->execute();
+  $stmt = $pdo->prepare("SELECT * FROM categories WHERE user_id = :user_id");
+  $stmt->execute([
+    ':user_id' => $_SESSION['user_id']
+  ]);
   $category_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
   // get payment methods
   $sql = $pdo->prepare("SHOW COLUMNS FROM expenses LIKE 'payment_method'");
