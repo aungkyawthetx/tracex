@@ -6,7 +6,7 @@
                     <i class="fas fa-chart-pie text-white"></i>
                 </div>
                 <a href="<?= url('public/index.php') ?>" class="text-xl font-bold text-white">
-                    BudgetBoard
+                    MySpend App
                 </a>
             </div>
         </div>
