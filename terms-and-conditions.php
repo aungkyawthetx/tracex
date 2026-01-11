@@ -11,13 +11,13 @@
         <h1 class="text-3xl font-bold mb-6 text-center">Terms & Conditions</h1>
         <p class="mb-4"><strong>Last updated:</strong> <?= date('Y') ?></p>
         <p class="mb-4">
-            Welcome to <strong>Budget-Board. The expense tracking web application</strong> (\"App\"), developed and operated by <strong>Aung Kyaw Thet</strong>. 
+            Welcome to <strong>Expense-Tracker. The expense tracking web application</strong> (\"App\"), developed and operated by <strong>Aung Kyaw Thet</strong>. 
             By accessing or using this App, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use the App.
         </p>
 
         <h2 class="text-xl font-semibold mt-6 mb-2">1. Purpose of the Application</h2>
         <p class="mb-4">
-            The Budget-Board App is designed to help users record, manage, and analyze their personal expenses. 
+            The Expense-Tracker App is designed to help users record, manage, and analyze their personal expenses. 
             The App is provided for <strong>informational and personal use only</strong> and should not be considered financial, legal, or professional advice.
         </p>
 
