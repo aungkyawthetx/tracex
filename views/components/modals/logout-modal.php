@@ -12,8 +12,8 @@
       <!-- Content -->
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <div class="sm:flex sm:items-start">
-          <div class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-            <i class="fas fa-sign-out-alt text-yellow-600"></i>
+          <div class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <i class="fas fa-sign-out-alt text-red-500"></i>
           </div>
           <!-- Text -->
           <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -31,7 +31,7 @@
       <!-- Actions -->
       <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
         <a href="<?= url('src/helpers/logout.php') ?>" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2
-            bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700
+            bg-red-600 text-base font-medium text-white hover:bg-red-700
             focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
             Signout
         </a>
