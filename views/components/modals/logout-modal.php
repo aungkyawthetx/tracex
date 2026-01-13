@@ -22,7 +22,7 @@
             </h3>
             <div class="mt-2">
               <p class="text-sm text-gray-500">
-                Are you sure you want to log out? You will need to sign in again to access your account.
+                Are you sure you want to sign out? You will need to sign in again to access your account.
               </p>
             </div>
           </div>
@@ -33,7 +33,7 @@
         <a href="<?= url('src/helpers/logout.php') ?>" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2
             bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700
             focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-            Logout
+            Signout
         </a>
 
         <button
