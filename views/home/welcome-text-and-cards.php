@@ -1,3 +1,7 @@
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+    <p class="text-gray-600">Welcome back, <?= $_SESSION['user_name'] ?? 'Guest'; ?>! Here's what's happening with your expenses today.</p>
+</div>
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
     <div class="bg-white rounded-lg shadow p-6">
