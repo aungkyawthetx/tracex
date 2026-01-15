@@ -67,7 +67,7 @@ const expenseBreakdownChart = new Chart(expenseBreakdownCtx, {
 });
 // categories
 function openAddCategoryModal() {
-    document.getElementById('addCategoryModal').classList.remove('hidden');
+    document.getElementById('editCategoryModal').classList.remove('hidden');
 }
 function closeAddCategoryModal() {
     document.getElementById('addCategoryModal').classList.add('hidden');
