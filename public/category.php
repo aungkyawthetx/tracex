@@ -23,8 +23,7 @@
 ?>
 <?php
   ob_start();
-  include __DIR__ . '/../views/categories/header.php';
-  include __DIR__ . '/../views/categories/table.php';
+  include __DIR__ . '/../views/categories/category-view.php';
   $content = ob_get_clean();
   include __DIR__ . '/../views/components/layout.php';
 ?>

@@ -1,4 +1,4 @@
-## Budget Board
+## MySpend
 A simple and efficient web-based expense tracking application built with PHP to help you manage your personal finances.
 
 ## Features
@@ -37,7 +37,7 @@ Composer (for dependency management)
 ## Installation
 Clone the repository
 
-git clone https://github.com/aungkyawthetx/budget-board.git 
+git clone https://github.com/aungkyawthetx/my-spend.git 
 cd budget-board
 Set up the database
 
