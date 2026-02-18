@@ -66,11 +66,14 @@ const expenseBreakdownChart = new Chart(expenseBreakdownCtx, {
     }
 });
 // categories
-function openAddCategoryModal() {
-    document.getElementById('addCategoryModal').classList.remove('hidden');
+function openEditCategoryModal(btn) {
+  document.getElementById('edit_category_id').value = btn.dataset.id;
+  document.getElementById('categoryName').value = btn.dataset.name;
+  document.getElementById('monthlyBudget').value = btn.dataset.budget;
+  document.getElementById('editCategoryModal').classList.remove('hidden');
 }
-function closeAddCategoryModal() {
-    document.getElementById('addCategoryModal').classList.add('hidden');
+function closeEditCategoryModal() {
+    document.getElementById('editCategoryModal').classList.add('hidden');
 }
 // expenses
 // Modal functions

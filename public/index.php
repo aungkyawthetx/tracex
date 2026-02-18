@@ -27,8 +27,11 @@
   $stmt->execute(['user_id' => $_SESSION['user_id']]);
   $totalExpenses = number_format($stmt->fetchColumn(), 0);
   $isUp = $totalExpenses >= $lastMonthTotal;
-
   $percent = $lastMonthTotal > 0 ? (($totalExpenses - $lastMonthTotal) / max($totalExpenses, $lastMonthTotal)) * 100 : 0;
+
+  $stmt = $pdo->prepare("SELECT COUNT(*) FROM categories");
+  $stmt->execute();
+  $categoriesCount = $stmt->fetchColumn();
 
   ob_start();
   include __DIR__ . '/../views/home/welcome-text-and-cards.php';
