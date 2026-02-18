@@ -10,7 +10,7 @@
         <div class="relative ml-3" id="user-dropdown">
           <div>
             <button type="button" id="user-menu-button" class="flex items-center focus:outline-none cursor-pointer">
-              <img class="w-8 h-8 rounded-full"  src="https://ui-avatars.com/api/?name=<?= $_SESSION['user_name'] ?>&background=6366f1&color=fff" ?>
+              <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['user_name'] ?? 'Guest') ?>&background=6366f1&color=fff" alt="User avatar">
               <span class="ml-2 text-sm font-medium text-gray-700"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Guest') ?></span>
               <i class="fas fa-chevron-down ml-1 text-gray-500 text-xs"></i>
             </button>

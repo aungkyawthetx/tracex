@@ -1,70 +1,76 @@
 // Monthly Expenses Chart
-const monthlyExpensesCtx = document.getElementById('monthlyExpensesChart').getContext('2d');
-const monthlyExpensesChart = new Chart(monthlyExpensesCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-        datasets: [{
-            label: 'Expenses',
-            data: [100000, 190000, 150000, 200000, 180000, 220000, 170000],
-            backgroundColor: '#6366F1',
-            borderRadius: 6
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
+const monthlyExpensesCanvas = document.getElementById('monthlyExpensesChart');
+if (monthlyExpensesCanvas) {
+    const monthlyExpensesCtx = monthlyExpensesCanvas.getContext('2d');
+    new Chart(monthlyExpensesCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+                label: 'Expenses',
+                data: [100000, 190000, 150000, 200000, 180000, 220000, 170000],
+                backgroundColor: '#6366F1',
+                borderRadius: 6
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    drawBorder: false
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
                 }
             },
-            x: {
-                grid: {
-                    display: false
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
                 }
             }
         }
-    }
-});
+    });
+}
 
 // Expense Breakdown Chart
-const expenseBreakdownCtx = document.getElementById('expenseBreakdownChart').getContext('2d');
-const expenseBreakdownChart = new Chart(expenseBreakdownCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Food', 'Transportation', 'Utilities', 'Entertainment', 'Shopping', 'Others'],
-        datasets: [{
-            data: [25, 15, 20, 10, 20, 10],
-            backgroundColor: [
-                '#6366F1',
-                '#10B981',
-                '#F59E0B',
-                '#8B5CF6',
-                '#EF4444',
-                '#64748B'
-            ],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right'
-            }
+const expenseBreakdownCanvas = document.getElementById('expenseBreakdownChart');
+if (expenseBreakdownCanvas) {
+    const expenseBreakdownCtx = expenseBreakdownCanvas.getContext('2d');
+    new Chart(expenseBreakdownCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Food', 'Transportation', 'Utilities', 'Entertainment', 'Shopping', 'Others'],
+            datasets: [{
+                data: [25, 15, 20, 10, 20, 10],
+                backgroundColor: [
+                    '#6366F1',
+                    '#10B981',
+                    '#F59E0B',
+                    '#8B5CF6',
+                    '#EF4444',
+                    '#64748B'
+                ],
+                borderWidth: 0
+            }]
         },
-        cutout: '70%'
-    }
-});
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
 // categories
 function openEditCategoryModal(btn) {
   document.getElementById('edit_category_id').value = btn.dataset.id;
@@ -86,15 +92,16 @@ function closeAddExpenseModal() {
 }
 
 function openEditExpenseModal(btn) {
-  console.log(btn.dataset);
+  const isPaid = btn.dataset.status === 'paid';
+
   document.getElementById('edit_expense_id').value = btn.dataset.id;
   document.getElementById('edit_expense_date').value = btn.dataset.date;
   document.getElementById('edit_amount').value = btn.dataset.amount;
   document.getElementById('edit_category').value = btn.dataset.category;
   document.getElementById('edit_payment_method').value = btn.dataset.paymentMethodId;
   document.getElementById('edit_note').value = btn.dataset.note;
-  document.getElementById('edit_status').checked = btn.dataset.status === '1';
-  
+  document.getElementById('edit_status').checked = isPaid;
+
   document.getElementById('editExpenseModal').classList.remove('hidden');
 }
 
@@ -112,80 +119,86 @@ function closeDeleteExpenseModal() {
 }
 // reports
 // Expense Trend Chart
-const trendCtx = document.getElementById('expenseTrendChart').getContext('2d');
-const expenseTrendChart = new Chart(trendCtx, {
-  type: 'line',
-  data: {
-    labels: ['Jun 1', 'Jun 5', 'Jun 10', 'Jun 15', 'Jun 20', 'Jun 25', 'Jun 30'],
-    datasets: [{
-      label: 'Daily Expenses',
-      data: [85, 120, 95, 245, 180, 150, 90],
-      backgroundColor: 'rgba(99, 102, 241, 0.1)',
-      borderColor: '#6366F1',
-      borderWidth: 2,
-      tension: 0.3,
-      fill: true
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      }
+const expenseTrendCanvas = document.getElementById('expenseTrendChart');
+if (expenseTrendCanvas) {
+  const trendCtx = expenseTrendCanvas.getContext('2d');
+  new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: ['Jun 1', 'Jun 5', 'Jun 10', 'Jun 15', 'Jun 20', 'Jun 25', 'Jun 30'],
+      datasets: [{
+        label: 'Daily Expenses',
+        data: [85, 120, 95, 245, 180, 150, 90],
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        borderColor: '#6366F1',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true
+      }]
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          drawBorder: false
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
         }
       },
-      x: {
-        grid: {
-          display: false
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            drawBorder: false
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
         }
       }
     }
-  }
-});
+  });
+}
 
 // Category Distribution Chart
-const categoryCtx = document.getElementById('categoryDistributionChart').getContext('2d');
-const categoryDistributionChart = new Chart(categoryCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ['Food & Dining', 'Shopping', 'Transportation', 'Utilities', 'Entertainment', 'Others'],
-    datasets: [{
-      data: [1245, 845, 520, 320, 215, 100],
-      backgroundColor: [
-        '#EF4444',
-        '#10B981',
-        '#3B82F6',
-        '#F59E0B',
-        '#8B5CF6',
-        '#64748B'
-      ],
-      borderWidth: 0
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'right',
-        labels: {
-          boxWidth: 12,
-          padding: 20
-        }
-      }
+const categoryDistributionCanvas = document.getElementById('categoryDistributionChart');
+if (categoryDistributionCanvas) {
+  const categoryCtx = categoryDistributionCanvas.getContext('2d');
+  new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Food & Dining', 'Shopping', 'Transportation', 'Utilities', 'Entertainment', 'Others'],
+      datasets: [{
+        data: [1245, 845, 520, 320, 215, 100],
+        backgroundColor: [
+          '#EF4444',
+          '#10B981',
+          '#3B82F6',
+          '#F59E0B',
+          '#8B5CF6',
+          '#64748B'
+        ],
+        borderWidth: 0
+      }]
     },
-    cutout: '70%'
-  }
-});
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            boxWidth: 12,
+            padding: 20
+          }
+        }
+      },
+      cutout: '70%'
+    }
+  });
+}

@@ -6,12 +6,23 @@
 
   $title = "Expenses - MySpend";
 
-  $category_stmt = $pdo->prepare("SELECT * FROM categories");
-  $category_stmt->execute();
+  $hasCategoryUserId = tableHasColumn($pdo, 'categories', 'user_id');
+  $hasPaymentMethodUserId = tableHasColumn($pdo, 'payment_methods', 'user_id');
+
+  if ($hasCategoryUserId) {
+    $category_stmt = $pdo->prepare("SELECT * FROM categories WHERE user_id IS NULL OR user_id = :user_id ORDER BY name ASC");
+    $category_stmt->execute([':user_id' => $_SESSION['user_id']]);
+  } else {
+    $category_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+  }
   $category_items = $category_stmt->fetchAll(PDO::FETCH_ASSOC);
   // get payment methods
-  $payment_stmt = $pdo->prepare("SELECT id, name, user_id FROM payment_methods WHERE user_id IS NULL OR user_id = ?");
-  $payment_stmt->execute([$_SESSION['user_id']]);
+  if ($hasPaymentMethodUserId) {
+    $payment_stmt = $pdo->prepare("SELECT id, name, user_id FROM payment_methods WHERE user_id IS NULL OR user_id = ?");
+    $payment_stmt->execute([$_SESSION['user_id']]);
+  } else {
+    $payment_stmt = $pdo->query("SELECT id, name FROM payment_methods");
+  }
   $payment_methods = $payment_stmt->fetchAll(PDO::FETCH_ASSOC);
 
   $errors = [];
@@ -22,7 +33,7 @@
     $category_id = isset($_POST['category_id']) ? (int) $_POST['category_id'] : null;
     $payment_method = isset($_POST['payment_method']) ? (int) $_POST['payment_method'] : null;
     $status = isset($_POST['paid']) ? 1 : 0;
-    $note = trim($_POST['note']);
+    $note = trim($_POST['note'] ?? '');
 
     if(empty($expense_date)) {
       $errors['expense_date'] = "Expense date is required";
@@ -30,13 +41,23 @@
 
     if(empty($amount)) {
       $errors['amount'] = "Amount is required";
+    } elseif(!is_numeric($amount) || (float)$amount <= 0) {
+      $errors['amount'] = "Amount must be greater than zero";
     }
 
     if(empty($category_id)) {
         $errors['category'] = "Category is required";
       } else {
-      $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = ?");
-      $stmt->execute([$category_id]);
+      if ($hasCategoryUserId) {
+        $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = :id AND (user_id IS NULL OR user_id = :user_id)");
+        $stmt->execute([
+          ':id' => $category_id,
+          ':user_id' => $_SESSION['user_id']
+        ]);
+      } else {
+        $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = :id");
+        $stmt->execute([':id' => $category_id]);
+      }
       $category_result = $stmt->fetch();
       if(!$category_result) {
         $errors['category'] = "Selected category is invalid";
@@ -48,6 +69,20 @@
 
     if(empty($payment_method)) {
       $errors['payment_method'] = "Payment method is required";
+    } else {
+      if ($hasPaymentMethodUserId) {
+        $stmt = $pdo->prepare("SELECT id FROM payment_methods WHERE id = :id AND (user_id IS NULL OR user_id = :user_id)");
+        $stmt->execute([
+          ':id' => $payment_method,
+          ':user_id' => $_SESSION['user_id']
+        ]);
+      } else {
+        $stmt = $pdo->prepare("SELECT id FROM payment_methods WHERE id = :id");
+        $stmt->execute([':id' => $payment_method]);
+      }
+      if(!$stmt->fetchColumn()) {
+        $errors['payment_method'] = "Selected payment method is invalid";
+      }
     }
 
     if(empty($errors)) {
@@ -56,7 +91,7 @@
         $_SESSION['user_id'],
         $category_id,
         $payment_method,
-        $amount,
+        (float)$amount,
         $note,
         $expense_date,
         $status
@@ -293,7 +328,7 @@
                                 </div>
                                 <div>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="edit_status" name="paid" checked class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
+                                        <input type="checkbox" id="edit_status" name="paid" class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
                                         <span class="ml-2 text-sm text-gray-700">Mark as paid</span>
                                     </label>
                                 </div>

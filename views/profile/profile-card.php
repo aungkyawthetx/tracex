@@ -16,7 +16,7 @@
         
         <!-- Edit Button - Desktop -->
         <div class="mt-6 lg:block hidden">
-          <a href="<?= url('public/profile.php?edit') ?>" onclick="openEditModal()" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium flex items-center justify-center shadow-md hover:shadow-lg">
+          <a href="<?= url('public/profile.php?edit') ?>" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium flex items-center justify-center shadow-md hover:shadow-lg">
             <i class="fas fa-edit mr-2"></i> Edit Profile
           </a>
         </div>

@@ -14,7 +14,7 @@
   ";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([':user_id' => $_SESSION['user_id']]);
-  $lastMonthTotal = number_format($stmt->fetchColumn(), 0);
+  $lastMonthTotal = (float) $stmt->fetchColumn();
 
   // current month total expenses
   $stmt = $pdo->prepare("
@@ -25,12 +25,16 @@
     AND user_id = :user_id
   ");
   $stmt->execute(['user_id' => $_SESSION['user_id']]);
-  $totalExpenses = number_format($stmt->fetchColumn(), 0);
+  $totalExpenses = (float) $stmt->fetchColumn();
   $isUp = $totalExpenses >= $lastMonthTotal;
-  $percent = $lastMonthTotal > 0 ? (($totalExpenses - $lastMonthTotal) / max($totalExpenses, $lastMonthTotal)) * 100 : 0;
+  $percent = $lastMonthTotal > 0 ? (($totalExpenses - $lastMonthTotal) / $lastMonthTotal) * 100 : ($totalExpenses > 0 ? 100 : 0);
 
-  $stmt = $pdo->prepare("SELECT COUNT(*) FROM categories");
-  $stmt->execute();
+  if (tableHasColumn($pdo, 'categories', 'user_id')) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id IS NULL OR user_id = :user_id");
+    $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  } else {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM categories");
+  }
   $categoriesCount = $stmt->fetchColumn();
 
   ob_start();
