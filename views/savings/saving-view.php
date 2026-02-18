@@ -55,6 +55,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button
+                                    onclick="openSavingTransactionModal(this)"
+                                    data-saving-id="<?= (int) ($saving['id'] ?? 0) ?>"
+                                    data-saving-name="<?= htmlspecialchars($saving['name'] ?? '') ?>"
+                                    data-current-amount="<?= htmlspecialchars((string) ($saving['current_amount'] ?? '0')) ?>"
+                                    class="text-green-600 hover:text-green-900 cursor-pointer mr-3"
+                                >
+                                    <i class="fas fa-right-left mr-1"></i> Transaction
+                                </button>
+                                <button
                                     onclick="openEditSavingModal(this)"
                                     data-id="<?= (int) ($saving['id'] ?? 0) ?>"
                                     data-name="<?= htmlspecialchars($saving['name'] ?? '') ?>"
@@ -76,6 +85,49 @@
                 <?php else: ?>
                     <tr>
                         <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No savings goals found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow overflow-hidden mt-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800">Recent Saving Transactions</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saving Goal</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <?php if (!empty($savingTransactions)): ?>
+                    <?php foreach ($savingTransactions as $txn): ?>
+                        <?php $isDeposit = ($txn['type'] ?? '') === 'deposit'; ?>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= date('M j, Y g:i A', strtotime($txn['created_at'])) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= htmlspecialchars($txn['saving_name'] ?? '-') ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $isDeposit ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
+                                    <?= $isDeposit ? 'Deposit' : 'Withdraw' ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium <?= $isDeposit ? 'text-green-700' : 'text-red-700' ?>">
+                                <?= $isDeposit ? '+' : '-' ?><?= number_format((float) ($txn['amount'] ?? 0), 0) ?> MMK
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($txn['note'] ?? '-') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No saving transactions yet.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -141,6 +193,58 @@
                     Save Goal
                 </button>
                 <button onclick="closeAddSavingModal()" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm cursor-pointer">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="savingTransactionModal" class="fixed z-50 inset-0 overflow-y-auto hidden">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75 backdrop-blur"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-10">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-right-left text-blue-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Add Saving Transaction</h3>
+                        <p id="savingTransactionMeta" class="text-xs text-gray-500 mt-1"></p>
+                        <div class="mt-2">
+                            <form id="savingTransactionForm" method="POST" action="">
+                                <input type="hidden" name="saving_id" id="transaction_saving_id">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label for="transaction_type" class="block text-sm font-medium text-gray-700">Type</label>
+                                        <select id="transaction_type" name="type" class="mt-1 h-10 p-2 w-full sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="deposit">Deposit</option>
+                                            <option value="withdraw">Withdraw</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="transaction_amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                                        <input type="number" step="0.01" id="transaction_amount" name="amount" class="mt-1 h-10 p-2 w-full sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="transaction_note" class="block text-sm font-medium text-gray-700">Note</label>
+                                    <textarea id="transaction_note" rows="3" name="note" class="mt-1 p-2 w-full sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Optional note"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="submit" name="btnSaveSavingTransaction" form="savingTransactionForm" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm cursor-pointer">
+                    Save Transaction
+                </button>
+                <button onclick="closeSavingTransactionModal()" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm cursor-pointer">
                     Cancel
                 </button>
             </div>

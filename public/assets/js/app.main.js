@@ -183,6 +183,30 @@ function closeDeleteSavingModal() {
     if (!modal) return;
     modal.classList.add('hidden');
 }
+
+function openSavingTransactionModal(btn) {
+    const modal = document.getElementById('savingTransactionModal');
+    if (!modal) return;
+
+    const savingId = btn.dataset.savingId || '';
+    const savingName = btn.dataset.savingName || 'Saving Goal';
+    const currentAmountRaw = parseFloat(btn.dataset.currentAmount || '0');
+    const currentAmount = Number.isFinite(currentAmountRaw) ? currentAmountRaw : 0;
+
+    document.getElementById('transaction_saving_id').value = savingId;
+    document.getElementById('transaction_type').value = 'deposit';
+    document.getElementById('transaction_amount').value = '';
+    document.getElementById('transaction_note').value = '';
+    document.getElementById('savingTransactionMeta').textContent = `${savingName} | Current: ${currentAmount.toLocaleString()} MMK`;
+
+    modal.classList.remove('hidden');
+}
+
+function closeSavingTransactionModal() {
+    const modal = document.getElementById('savingTransactionModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
 // reports
 // Expense Trend Chart
 const expenseTrendCanvas = document.getElementById('expenseTrendChart');

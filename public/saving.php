@@ -7,6 +7,26 @@ require_once __DIR__ . '/../src/bootstrap.php';
 $title = "Savings - MySpend";
 $errors = [];
 
+function getSavingCurrentAmount(PDO $pdo, int $savingId, int $userId): ?float
+{
+    $stmt = $pdo->prepare("
+        SELECT COALESCE(SUM(CASE WHEN st.type = 'deposit' THEN st.amount ELSE -st.amount END), 0) AS current_amount
+        FROM savings s
+        LEFT JOIN saving_transactions st ON st.saving_id = s.id
+        WHERE s.id = :saving_id AND s.user_id = :user_id
+        GROUP BY s.id
+    ");
+    $stmt->execute([
+        ':saving_id' => $savingId,
+        ':user_id' => $userId,
+    ]);
+    $amount = $stmt->fetchColumn();
+    if ($amount === false) {
+        return null;
+    }
+    return (float) $amount;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveSaving'])) {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -157,6 +177,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnDeleteSaving'])) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveSavingTransaction'])) {
+    $savingId = isset($_POST['saving_id']) ? (int) $_POST['saving_id'] : 0;
+    $type = trim($_POST['type'] ?? '');
+    $amount = $_POST['amount'] ?? '';
+    $note = trim($_POST['note'] ?? '');
+
+    if ($savingId <= 0) {
+        $errors['saving_id'] = 'Invalid saving goal.';
+    }
+    if (!in_array($type, ['deposit', 'withdraw'], true)) {
+        $errors['type'] = 'Invalid transaction type.';
+    }
+    if (!is_numeric($amount) || (float) $amount <= 0) {
+        $errors['amount'] = 'Amount must be greater than zero.';
+    }
+
+    if (empty($errors)) {
+        $currentAmount = getSavingCurrentAmount($pdo, $savingId, (int) $_SESSION['user_id']);
+        if ($currentAmount === null) {
+            $errors['saving_id'] = 'Saving goal not found or access denied.';
+        } elseif ($type === 'withdraw' && (float) $amount > $currentAmount) {
+            $errors['amount'] = 'Withdrawal amount exceeds current savings.';
+        }
+    }
+
+    if (!empty($errors)) {
+        setFlash('error', array_values($errors)[0]);
+        header("Location: saving.php");
+        exit;
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO saving_transactions (saving_id, user_id, type, amount, note)
+        VALUES (:saving_id, :user_id, :type, :amount, :note)
+    ");
+    $stmt->execute([
+        ':saving_id' => $savingId,
+        ':user_id' => $_SESSION['user_id'],
+        ':type' => $type,
+        ':amount' => (float) $amount,
+        ':note' => $note !== '' ? $note : null,
+    ]);
+
+    setFlash('success', 'Saving transaction added.');
+    header("Location: saving.php");
+    exit;
+}
+
 $stmt = $pdo->prepare("
     SELECT
         s.*,
@@ -169,6 +237,17 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([':user_id' => $_SESSION['user_id']]);
 $savings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("
+    SELECT st.*, s.name AS saving_name
+    FROM saving_transactions st
+    INNER JOIN savings s ON s.id = st.saving_id
+    WHERE st.user_id = :user_id
+    ORDER BY st.created_at DESC, st.id DESC
+    LIMIT 20
+");
+$stmt->execute([':user_id' => $_SESSION['user_id']]);
+$savingTransactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ob_start();
 include __DIR__ . '/../views/savings/saving-view.php';
