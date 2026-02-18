@@ -207,6 +207,50 @@ function closeSavingTransactionModal() {
     if (!modal) return;
     modal.classList.add('hidden');
 }
+// budgets
+function openAddBudgetModal() {
+    const modal = document.getElementById('budgetModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+}
+
+function closeAddBudgetModal() {
+    const modal = document.getElementById('budgetModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function openEditBudgetModal(btn) {
+    const modal = document.getElementById('editBudgetModal');
+    if (!modal) return;
+
+    document.getElementById('edit_budget_id').value = btn.dataset.id || '';
+    document.getElementById('edit_budget_category_id').value = btn.dataset.categoryId || '';
+    document.getElementById('edit_budget_amount').value = btn.dataset.amount || '';
+    document.getElementById('edit_budget_month').value = btn.dataset.month || '';
+
+    modal.classList.remove('hidden');
+}
+
+function closeEditBudgetModal() {
+    const modal = document.getElementById('editBudgetModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function openDeleteBudgetModal(id) {
+    const modal = document.getElementById('deleteBudgetModal');
+    if (!modal) return;
+
+    document.getElementById('delete-budget-id').value = id;
+    modal.classList.remove('hidden');
+}
+
+function closeDeleteBudgetModal() {
+    const modal = document.getElementById('deleteBudgetModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
 // reports
 // Expense Trend Chart
 const expenseTrendCanvas = document.getElementById('expenseTrendChart');

@@ -26,6 +26,10 @@
                     <i class="fas fa-piggy-bank mr-3"></i>
                     Savings
                 </a>
+                <a href="<?= url('public/budget.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/budget.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
+                    <i class="fas fa-wallet mr-3"></i>
+                    Budgets
+                </a>
                 <a href="<?= url('public/report.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/report.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
                     <i class="fas fa-chart-pie mr-3"></i>
                     Reports

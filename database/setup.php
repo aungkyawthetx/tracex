@@ -125,14 +125,21 @@ class DatabaseMigration
     {
         $sql = "
             CREATE TABLE IF NOT EXISTS budgets (
-                id INT NOT NULL AUTO_INCREMENT,
-                user_id INT NOT NULL,
-                category_id INT NOT NULL,
-                amount DECIMAL(10,2) NOT NULL,
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                user_id BIGINT UNSIGNED NOT NULL,
+                category_id BIGINT UNSIGNED NOT NULL,
+                amount DECIMAL(12,2) NOT NULL,
                 month_year DATE NOT NULL,
-                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id)
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY uniq_user_category_month (user_id, category_id, month_year),
+                KEY idx_budgets_user_month (user_id, month_year),
+                CONSTRAINT fk_budgets_user
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                CONSTRAINT fk_budgets_category
+                    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+                CONSTRAINT budgets_chk_amount CHECK (amount > 0)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         ";
 

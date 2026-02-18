@@ -97,9 +97,9 @@
         </div>
         
         <div class="mt-6">
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150">
+            <a href="budget.php" class="block text-center w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150">
                 Add New Budget
-            </button>
+            </a>
         </div>
     </div>
 </div>

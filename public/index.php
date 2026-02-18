@@ -28,6 +28,60 @@
   $totalExpenses = (float) $stmt->fetchColumn();
   $isUp = $totalExpenses >= $lastMonthTotal;
   $percent = $lastMonthTotal > 0 ? (($totalExpenses - $lastMonthTotal) / $lastMonthTotal) * 100 : ($totalExpenses > 0 ? 100 : 0);
+
+  // last month total budgets
+  $stmt = $pdo->prepare("
+    SELECT COALESCE(SUM(amount), 0) AS total
+    FROM budgets
+    WHERE user_id = :user_id
+      AND month_year >= DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m-01')
+      AND month_year < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $lastMonthBudgetTotal = (float) $stmt->fetchColumn();
+
+  // current month total budgets
+  $stmt = $pdo->prepare("
+    SELECT COALESCE(SUM(amount), 0) AS total
+    FROM budgets
+    WHERE user_id = :user_id
+      AND month_year >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+      AND month_year < DATE_FORMAT(CURRENT_DATE + INTERVAL 1 MONTH, '%Y-%m-01')
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $monthlyBudgetTotal = (float) $stmt->fetchColumn();
+  $budgetIsUp = $monthlyBudgetTotal >= $lastMonthBudgetTotal;
+  $budgetPercent = $lastMonthBudgetTotal > 0
+    ? (($monthlyBudgetTotal - $lastMonthBudgetTotal) / $lastMonthBudgetTotal) * 100
+    : ($monthlyBudgetTotal > 0 ? 100 : 0);
+
+  // last month total savings deposits
+  $stmt = $pdo->prepare("
+    SELECT COALESCE(SUM(amount), 0) AS total
+    FROM saving_transactions
+    WHERE user_id = :user_id
+      AND type = 'deposit'
+      AND created_at >= DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m-01')
+      AND created_at < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $lastMonthSavingsDeposits = (float) $stmt->fetchColumn();
+
+  // current month total savings deposits
+  $stmt = $pdo->prepare("
+    SELECT COALESCE(SUM(amount), 0) AS total
+    FROM saving_transactions
+    WHERE user_id = :user_id
+      AND type = 'deposit'
+      AND created_at >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+      AND created_at < DATE_FORMAT(CURRENT_DATE + INTERVAL 1 MONTH, '%Y-%m-01')
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $monthlySavingsDeposits = (float) $stmt->fetchColumn();
+  $savingsIsUp = $monthlySavingsDeposits >= $lastMonthSavingsDeposits;
+  $savingsPercent = $lastMonthSavingsDeposits > 0
+    ? (($monthlySavingsDeposits - $lastMonthSavingsDeposits) / $lastMonthSavingsDeposits) * 100
+    : ($monthlySavingsDeposits > 0 ? 100 : 0);
   
   if (tableHasColumn($pdo, 'categories', 'user_id')) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id IS NULL OR user_id = :user_id");
