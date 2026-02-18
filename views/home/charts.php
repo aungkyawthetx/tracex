@@ -22,3 +22,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.dashboardData = {
+        monthly: {
+            labels: <?= json_encode($monthlyChartLabels, JSON_UNESCAPED_UNICODE) ?>,
+            values: <?= json_encode($monthlyChartValues) ?>
+        },
+        breakdown: {
+            labels: <?= json_encode($breakdownLabels, JSON_UNESCAPED_UNICODE) ?>,
+            values: <?= json_encode($breakdownValues) ?>
+        }
+    };
+</script>

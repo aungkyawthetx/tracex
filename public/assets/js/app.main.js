@@ -1,14 +1,23 @@
 // Monthly Expenses Chart
 const monthlyExpensesCanvas = document.getElementById('monthlyExpensesChart');
 if (monthlyExpensesCanvas) {
+    const dashboardData = window.dashboardData || {};
+    const monthlyData = dashboardData.monthly || {};
+    const monthlyLabels = Array.isArray(monthlyData.labels) && monthlyData.labels.length
+        ? monthlyData.labels
+        : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+    const monthlyValues = Array.isArray(monthlyData.values) && monthlyData.values.length
+        ? monthlyData.values
+        : [100000, 190000, 150000, 200000, 180000, 220000, 170000];
+
     const monthlyExpensesCtx = monthlyExpensesCanvas.getContext('2d');
     new Chart(monthlyExpensesCtx, {
         type: 'bar',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            labels: monthlyLabels,
             datasets: [{
                 label: 'Expenses',
-                data: [100000, 190000, 150000, 200000, 180000, 220000, 170000],
+                data: monthlyValues,
                 backgroundColor: '#6366F1',
                 borderRadius: 6
             }]
@@ -41,13 +50,22 @@ if (monthlyExpensesCanvas) {
 // Expense Breakdown Chart
 const expenseBreakdownCanvas = document.getElementById('expenseBreakdownChart');
 if (expenseBreakdownCanvas) {
+    const dashboardData = window.dashboardData || {};
+    const breakdownData = dashboardData.breakdown || {};
+    const breakdownLabels = Array.isArray(breakdownData.labels) && breakdownData.labels.length
+        ? breakdownData.labels
+        : ['Food', 'Transportation', 'Utilities', 'Entertainment', 'Shopping', 'Others'];
+    const breakdownValues = Array.isArray(breakdownData.values) && breakdownData.values.length
+        ? breakdownData.values
+        : [25, 15, 20, 10, 20, 10];
+
     const expenseBreakdownCtx = expenseBreakdownCanvas.getContext('2d');
     new Chart(expenseBreakdownCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Food', 'Transportation', 'Utilities', 'Entertainment', 'Shopping', 'Others'],
+            labels: breakdownLabels,
             datasets: [{
-                data: [25, 15, 20, 10, 20, 10],
+                data: breakdownValues,
                 backgroundColor: [
                     '#6366F1',
                     '#10B981',
@@ -92,7 +110,8 @@ function closeAddExpenseModal() {
 }
 
 function openEditExpenseModal(btn) {
-  const isPaid = btn.dataset.status === 'paid';
+  const rawStatus = (btn.dataset.status ?? '').toString().trim().toLowerCase();
+  const isPaid = rawStatus === '1' || rawStatus === 'true' || rawStatus === 'paid' || rawStatus === 'yes' || rawStatus === 'on';
 
   document.getElementById('edit_expense_id').value = btn.dataset.id;
   document.getElementById('edit_expense_date').value = btn.dataset.date;
@@ -116,6 +135,53 @@ function openDeleteExpenseModal(id) {
 
 function closeDeleteExpenseModal() {
     document.getElementById('deleteExpenseModal').classList.add('hidden');
+}
+// savings
+function openAddSavingModal() {
+    const modal = document.getElementById('savingModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+}
+
+function closeAddSavingModal() {
+    const modal = document.getElementById('savingModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function openEditSavingModal(btn) {
+    const modal = document.getElementById('editSavingModal');
+    if (!modal) return;
+
+    document.getElementById('edit_saving_id').value = btn.dataset.id || '';
+    document.getElementById('edit_saving_name').value = btn.dataset.name || '';
+    document.getElementById('edit_saving_description').value = btn.dataset.description || '';
+    document.getElementById('edit_saving_target_amount').value = btn.dataset.targetAmount || '';
+    document.getElementById('edit_saving_start_date').value = btn.dataset.startDate || '';
+    document.getElementById('edit_saving_target_date').value = btn.dataset.targetDate || '';
+    document.getElementById('edit_saving_status').value = btn.dataset.status || 'active';
+
+    modal.classList.remove('hidden');
+}
+
+function closeEditSavingModal() {
+    const modal = document.getElementById('editSavingModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function openDeleteSavingModal(id) {
+    const modal = document.getElementById('deleteSavingModal');
+    if (!modal) return;
+
+    document.getElementById('delete-saving-id').value = id;
+    modal.classList.remove('hidden');
+}
+
+function closeDeleteSavingModal() {
+    const modal = document.getElementById('deleteSavingModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
 }
 // reports
 // Expense Trend Chart

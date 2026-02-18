@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Recent Transactions</h2>
-            <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500">View All</a>
+            <a href="expense.php" class="text-sm text-indigo-600 hover:text-indigo-500">View All</a>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -17,51 +17,26 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jun 15, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Grocery Shopping</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Food</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> 150,000 MMK</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jun 14, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Electric Bill</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Utilities</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">85,200 MMK</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jun 12, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Dinner with Friends</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dining Out</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">64,300 MMK</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jun 10, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Gas Station</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Transportation</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45,000 MMK</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jun 8, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Netflix Subscription</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Entertainment</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">14,990 MMK</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                        </td>
-                    </tr>
+                    <?php if (!empty($recentTransactions)): ?>
+                        <?php foreach ($recentTransactions as $txn): ?>
+                            <?php $isPaid = (int)($txn['status'] ?? 0) === 1; ?>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= date('M j, Y', strtotime($txn['expense_date'])) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?= htmlspecialchars($txn['note'] ?: '-') ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($txn['category_name']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= number_format((float)$txn['amount'], 0) ?> MMK</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
+                                        <?= $isPaid ? 'Paid' : 'Pending' ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-sm text-gray-500 text-center">No transactions found.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

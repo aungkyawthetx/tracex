@@ -154,14 +154,10 @@
   }
 
   $sql .= " ORDER BY expenses.expense_date DESC";
-
   $stmt = $pdo->prepare($sql);
   $stmt->execute(['user_id' => $_SESSION['user_id']] + $params);
   $expenses = $stmt->fetchAll();
 
-?>
-
-<?php
   ob_start();
   include __DIR__ . '/../views/expenses/header-and-filter.php';
   include __DIR__ . '/../views/expenses/expense-view.php';

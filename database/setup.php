@@ -1,162 +1,337 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
 
-  class DatabaseMigration {
-    private $pdo; // only visible within the class
+class DatabaseMigration
+{
+    private PDO $pdo;
 
-    public function __construct($pdo) {
-      $this->pdo = $pdo;
+    public function __construct(PDO $pdo)
+    {
+        $this->pdo = $pdo;
     }
-      
-    public function createTables() {
-      try {
-        // Enable foreign key constraints
-        $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+    public function run(bool $fresh = false, bool $seed = true, bool $killConnections = false): void
+    {
+        if ($fresh) {
+            echo "Fresh mode: dropping existing tables...\n";
+            $this->dropAllTables($killConnections);
+        }
+
+        $this->createTables();
+
+        if ($seed) {
+            $this->seedDefaults();
+        }
+
+        echo "Setup completed successfully.\n";
+    }
+
+    private function createTables(): void
+    {
         $this->createUsersTable();
-        $this->createCategoriesTable(); 
+        $this->createCategoriesTable();
+        $this->createPaymentMethodsTable();
         $this->createExpensesTable();
         $this->createBudgetsTable();
-        $this->insertDefaultCategories();
+        $this->createSavingsTable();
+        $this->createSavingTransactionsTable();
+    }
 
-        echo "Database tables created successfully!\n";
-        echo "Your GODDAMN database setup completed!\n";
-      } 
-      catch (PDOException $e) {
-        die("Database migration failed: " . $e->getMessage());
-      }
-    }
-      
-    private function createUsersTable() {
-      $sql = "CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        profile_picture VARCHAR(30),
-        remember_token VARCHAR(100),
-        token_expiry DateTime,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )";
-      
-      $this->pdo->exec($sql);
-      echo "Users table created successfully!\n";
-    }
-      
-    private function createCategoriesTable() {
-      $sql = "CREATE TABLE IF NOT EXISTS categories (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        user_id INTEGER NULL,
-        name VARCHAR(50) NOT NULL,
-        description VARCHAR(100),
-        monthly_budget INTEGER NOT NULL,
-        color VARCHAR(10) NULL,
-        icon VARCHAR(30) NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        UNIQUE KEY unique_category_name (name, user_id)
-      )";
-      
-      $this->pdo->exec($sql);
-      echo "Categories table created successfully!\n";
-    }
-      
-    private function createExpensesTable() {
-      $sql = "CREATE TABLE IF NOT EXISTS expenses (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        user_id INTEGER NOT NULL,
-        category_id INTEGER NOT NULL,
-        amount DECIMAL(10,2) NOT NULL,
-        description TEXT NOT NULL,
-        expense_date DATE NOT NULL,
-        payment_method ENUM('cash', 'card', 'digital_wallet', 'bank_transfer') DEFAULT 'cash',
-        status BOOLEAN DEFAULT TRUE,
-        note VARCHAR (100),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
-        INDEX idx_expense_date (expense_date),
-        INDEX idx_user_date (user_id, expense_date)
-      )";
-      
-      $this->pdo->exec($sql);
-      echo "Expenses table created successfully!\n";
-    }
-      
-    private function createBudgetsTable() {
-      $sql = "CREATE TABLE IF NOT EXISTS budgets (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        user_id INTEGER NOT NULL,
-        category_id INTEGER NULL,
-        amount DECIMAL(10,2) NOT NULL,
-        month_year DATE NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
-        UNIQUE KEY unique_budget (user_id, category_id, month_year)
-      )";
-      
-      $this->pdo->exec($sql);
-      echo "Budgets table created successfully!\n";
-    }
-      
-    private function insertDefaultCategories() {
-      $defaultCategories = [
-        ['Food & Dining', 'Restaurants, groceries, and food delivery', 50000, '#EF4444', 'shopping-bag'],
-        ['Transportation', 'Fuel, public transport, taxi, maintenance', 40000, '#F59E0B', 'truck'],
-        ['Entertainment', 'Movies, games, concerts, hobbies', 20000, '#8B5CF6', 'film'],
-        ['Utilities', 'Electricity, water, internet, phone bills', 10000, '#06B6D4', 'light-bulb'],
-        ['Shopping', 'Clothing, electronics, personal items', 20000, '#EC4899', 'shopping-cart'],
-        ['Healthcare', 'Medical, pharmacy, insurance', 40000, '#10B981', 'heart'],
-        ['Education', 'Books, courses, tuition fees', 100000, '#6366F1', 'academic-cap'],
-        ['Travel', 'Flights, hotels, vacation expenses', 20000, '#F97316', 'globe'],
-        ['Bills & Payments', 'Rent, loan payments, subscriptions', 30000, '#84CC16', 'document-text'],
-        ['Other', 'Miscellaneous expenses', 20000, '#6B7280', 'dots-circle-horizontal']
-      ];
-        
-      $sql = "INSERT IGNORE INTO categories (name, description, monthly_budget, color, icon) VALUES (?, ?, ?, ?, ?)";
-      $stmt = $this->pdo->prepare($sql);
-      
-      foreach ($defaultCategories as $category) {
-        $stmt->execute($category);
-      }
-      echo "Default categories inserted\n";
-    }
-      
-    public function dropAllTables() {
-      $tables = ['budgets', 'expenses', 'categories', 'users'];
-      
-      // Disable foreign key checks
-      $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-      
-      foreach ($tables as $table) {
-          $this->pdo->exec("DROP TABLE IF EXISTS $table");
-          echo "Dropped table: $table\n";
-      }
-      
-      // Re-enable foreign key checks
-      $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-      echo "All tables dropped successfully!\n";
-    }
-  }
+    private function createUsersTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS users (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(150) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                role ENUM('user','admin') NOT NULL DEFAULT 'user',
+                remember_token VARCHAR(64) DEFAULT NULL,
+                token_expiry DATETIME DEFAULT NULL,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY email (email)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ";
 
-  //run migration
-  try {
-    $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
-    $pdo = new PDO($dsn, $DB_USER, $DB_PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+        $this->pdo->exec($sql);
+        echo "Created/verified: users\n";
+    }
+
+    private function createCategoriesTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS categories (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                description VARCHAR(255) DEFAULT NULL,
+                icon VARCHAR(100) DEFAULT NULL,
+                color VARCHAR(50) DEFAULT NULL,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: categories\n";
+    }
+
+    private function createPaymentMethodsTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS payment_methods (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                user_id BIGINT UNSIGNED DEFAULT NULL,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY user_id (user_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: payment_methods\n";
+    }
+
+    private function createExpensesTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS expenses (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                user_id BIGINT UNSIGNED NOT NULL,
+                category_id BIGINT UNSIGNED NOT NULL,
+                payment_method_id BIGINT UNSIGNED NOT NULL,
+                amount DECIMAL(10,2) NOT NULL,
+                note TEXT,
+                expense_date DATE NOT NULL,
+                status ENUM('paid','unpaid') DEFAULT 'paid',
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY idx_user_date (user_id, expense_date),
+                KEY idx_category (category_id),
+                KEY idx_payment_method (payment_method_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: expenses\n";
+    }
+
+    private function createBudgetsTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS budgets (
+                id INT NOT NULL AUTO_INCREMENT,
+                user_id INT NOT NULL,
+                category_id INT NOT NULL,
+                amount DECIMAL(10,2) NOT NULL,
+                month_year DATE NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: budgets\n";
+    }
+
+    private function createSavingsTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS savings (
+                id INT NOT NULL AUTO_INCREMENT,
+                user_id BIGINT UNSIGNED NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                description TEXT,
+                target_amount DECIMAL(12,2) NOT NULL DEFAULT '0.00',
+                start_date DATE DEFAULT NULL,
+                target_date DATE DEFAULT NULL,
+                status ENUM('active','completed','cancelled') DEFAULT 'active',
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY idx_savings_user (user_id),
+                CONSTRAINT fk_savings_user
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: savings\n";
+    }
+
+    private function createSavingTransactionsTable(): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS saving_transactions (
+                id INT NOT NULL AUTO_INCREMENT,
+                saving_id INT NOT NULL,
+                user_id BIGINT UNSIGNED NOT NULL,
+                type ENUM('deposit','withdraw') NOT NULL,
+                amount DECIMAL(12,2) NOT NULL,
+                note TEXT,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY idx_transactions_saving (saving_id),
+                KEY idx_transactions_user (user_id),
+                CONSTRAINT fk_transactions_saving
+                    FOREIGN KEY (saving_id) REFERENCES savings(id) ON DELETE CASCADE,
+                CONSTRAINT fk_transactions_user
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                CONSTRAINT saving_transactions_chk_1 CHECK (amount > 0)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+        ";
+
+        $this->pdo->exec($sql);
+        echo "Created/verified: saving_transactions\n";
+    }
+
+    private function seedDefaults(): void
+    {
+        $this->seedCategories();
+        $this->seedPaymentMethods();
+    }
+
+    private function seedCategories(): void
+    {
+        $defaultCategories = [
+            ['Food & Dining', 'Restaurants, groceries, and food delivery', 'utensils', '#EF4444'],
+            ['Transportation', 'Fuel, public transport, taxi, maintenance', 'bus', '#3B82F6'],
+            ['Entertainment', 'Movies, games, concerts, hobbies', 'film', '#8B5CF6'],
+            ['Utilities', 'Electricity, water, internet, phone bills', 'lightbulb', '#F59E0B'],
+            ['Shopping', 'Clothing, electronics, personal items', 'shopping-cart', '#EC4899'],
+            ['Healthcare', 'Medical, pharmacy, insurance', 'heart', '#10B981'],
+            ['Education', 'Books, courses, tuition fees', 'graduation-cap', '#6366F1'],
+            ['Travel', 'Flights, hotels, vacation expenses', 'plane', '#06B6D4'],
+            ['Bills & Payments', 'Rent, subscriptions, and bills', 'file-invoice-dollar', '#F97316'],
+            ['Others', 'Miscellaneous expenses', 'question', '#6B7280'],
+        ];
+
+        $existsStmt = $this->pdo->prepare("SELECT id FROM categories WHERE name = :name LIMIT 1");
+        $insertStmt = $this->pdo->prepare("
+            INSERT INTO categories (name, description, icon, color)
+            VALUES (:name, :description, :icon, :color)
+        ");
+
+        foreach ($defaultCategories as $category) {
+            $existsStmt->execute([':name' => $category[0]]);
+            if ($existsStmt->fetchColumn()) {
+                continue;
+            }
+
+            $insertStmt->execute([
+                ':name' => $category[0],
+                ':description' => $category[1],
+                ':icon' => $category[2],
+                ':color' => $category[3],
+            ]);
+        }
+
+        echo "Seeded: default categories\n";
+    }
+
+    private function seedPaymentMethods(): void
+    {
+        $defaultMethods = ['Cash', 'Card', 'Bank Transfer', 'Digital Wallet'];
+
+        $existsStmt = $this->pdo->prepare("SELECT id FROM payment_methods WHERE user_id IS NULL AND name = :name LIMIT 1");
+        $insertStmt = $this->pdo->prepare("INSERT INTO payment_methods (name, user_id) VALUES (:name, NULL)");
+
+        foreach ($defaultMethods as $method) {
+            $existsStmt->execute([':name' => $method]);
+            if ($existsStmt->fetchColumn()) {
+                continue;
+            }
+
+            $insertStmt->execute([':name' => $method]);
+        }
+
+        echo "Seeded: default payment methods\n";
+    }
+
+    public function dropAllTables(bool $killConnections = false): void
+    {
+        $tables = ['saving_transactions', 'savings', 'expenses', 'budgets', 'payment_methods', 'categories', 'users'];
+
+        if ($killConnections) {
+            $this->killOtherConnections();
+        }
+
+        // Fail fast instead of hanging for metadata locks.
+        $this->pdo->exec("SET SESSION lock_wait_timeout = 10");
+        $this->pdo->exec("SET SESSION innodb_lock_wait_timeout = 10");
+        $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+        foreach ($tables as $table) {
+            echo "Dropping: {$table}...\n";
+            $this->pdo->exec("DROP TABLE IF EXISTS {$table}");
+            echo "Dropped: {$table}\n";
+        }
+        $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+    }
+
+    private function killOtherConnections(): void
+    {
+        $currentId = (int) $this->pdo->query("SELECT CONNECTION_ID()")->fetchColumn();
+        $currentDb = (string) $this->pdo->query("SELECT DATABASE()")->fetchColumn();
+
+        $rows = $this->pdo->query("SHOW PROCESSLIST")->fetchAll(PDO::FETCH_ASSOC);
+        $killed = 0;
+
+        foreach ($rows as $row) {
+            $id = isset($row['Id']) ? (int) $row['Id'] : 0;
+            $db = (string) ($row['db'] ?? '');
+
+            if ($id <= 0 || $id === $currentId || $db !== $currentDb) {
+                continue;
+            }
+
+            try {
+                $this->pdo->exec("KILL {$id}");
+                $killed++;
+            } catch (PDOException $e) {
+                // Ignore individual kill failures and continue.
+            }
+        }
+
+        echo "Killed {$killed} other connection(s) on DB '{$currentDb}'.\n";
+    }
+}
+
+function printUsage(): void
+{
+    echo "Usage:\n";
+    echo "  php database/setup.php             # create/verify tables + seed defaults\n";
+    echo "  php database/setup.php --fresh     # drop all, recreate tables, seed defaults\n";
+    echo "  php database/setup.php --no-seed   # create/verify tables without seed data\n";
+    echo "  php database/setup.php --fresh --kill-connections\n";
+    echo "  php database/setup.php --fresh --no-seed\n";
+}
+
+try {
+    $dsn = "mysql:host={$DB_HOST};port=3306;dbname={$DB_NAME};charset=utf8mb4";
+    $pdo = new PDO($dsn, $DB_USER, $DB_PASS, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_TIMEOUT => 10,
+    ]);
+
+    $args = $argv ?? [];
+    $fresh = in_array('--fresh', $args, true);
+    $seed = !in_array('--no-seed', $args, true);
+    $killConnections = in_array('--kill-connections', $args, true);
+
+    if (in_array('--help', $args, true) || in_array('-h', $args, true)) {
+        printUsage();
+        exit(0);
+    }
+
     $migration = new DatabaseMigration($pdo);
-    
-    // Check command line arguments
-    if (isset($argv[1]) && $argv[1] === '--fresh') {
-        echo "Fresh installation requested...\n";
-        $migration->dropAllTables();
-    }
-
-    $migration->createTables();
-  } 
-  catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-  }
+    $migration->run($fresh, $seed, $killConnections);
+} catch (PDOException $e) {
+    die("Database setup failed: " . $e->getMessage() . PHP_EOL);
+}

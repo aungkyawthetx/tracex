@@ -28,7 +28,7 @@
   $totalExpenses = (float) $stmt->fetchColumn();
   $isUp = $totalExpenses >= $lastMonthTotal;
   $percent = $lastMonthTotal > 0 ? (($totalExpenses - $lastMonthTotal) / $lastMonthTotal) * 100 : ($totalExpenses > 0 ? 100 : 0);
-
+  
   if (tableHasColumn($pdo, 'categories', 'user_id')) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id IS NULL OR user_id = :user_id");
     $stmt->execute([':user_id' => $_SESSION['user_id']]);
@@ -36,6 +36,68 @@
     $stmt = $pdo->query("SELECT COUNT(*) FROM categories");
   }
   $categoriesCount = $stmt->fetchColumn();
+
+  // monthly expenses for last 6 months (including current month)
+  $monthMap = [];
+  for ($i = 5; $i >= 0; $i--) {
+    $key = date('Y-m', strtotime("-{$i} months"));
+    $monthMap[$key] = 0.0;
+  }
+
+  $stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(expense_date, '%Y-%m') AS ym, COALESCE(SUM(amount), 0) AS total
+    FROM expenses
+    WHERE user_id = :user_id
+      AND expense_date >= DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 MONTH), '%Y-%m-01')
+    GROUP BY DATE_FORMAT(expense_date, '%Y-%m')
+    ORDER BY ym ASC
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $monthlyRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($monthlyRows as $row) {
+    if (isset($monthMap[$row['ym']])) {
+      $monthMap[$row['ym']] = (float) $row['total'];
+    }
+  }
+  $monthlyChartLabels = array_map(
+    fn($ym) => date('M', strtotime($ym . '-01')),
+    array_keys($monthMap)
+  );
+  $monthlyChartValues = array_values($monthMap);
+
+  // current month category breakdown
+  $stmt = $pdo->prepare("
+    SELECT COALESCE(c.name, 'Uncategorized') AS category_name, COALESCE(SUM(e.amount), 0) AS total
+    FROM expenses e
+    LEFT JOIN categories c ON c.id = e.category_id
+    WHERE e.user_id = :user_id
+      AND MONTH(e.expense_date) = MONTH(CURRENT_DATE())
+      AND YEAR(e.expense_date) = YEAR(CURRENT_DATE())
+    GROUP BY e.category_id, c.name
+    ORDER BY total DESC
+    LIMIT 6
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $breakdownRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $breakdownLabels = array_map(fn($row) => $row['category_name'], $breakdownRows);
+  $breakdownValues = array_map(fn($row) => (float) $row['total'], $breakdownRows);
+
+  // recent transactions
+  $stmt = $pdo->prepare("
+    SELECT
+      e.expense_date,
+      e.note,
+      e.amount,
+      e.status,
+      COALESCE(c.name, 'Uncategorized') AS category_name
+    FROM expenses e
+    LEFT JOIN categories c ON c.id = e.category_id
+    WHERE e.user_id = :user_id
+    ORDER BY e.expense_date DESC, e.id DESC
+    LIMIT 5
+  ");
+  $stmt->execute([':user_id' => $_SESSION['user_id']]);
+  $recentTransactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   ob_start();
   include __DIR__ . '/../views/home/welcome-text-and-cards.php';
