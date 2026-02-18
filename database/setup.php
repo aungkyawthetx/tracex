@@ -14,9 +14,11 @@ require_once __DIR__ . '/../config/db.php';
         $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
         $this->createUsersTable();
         $this->createCategoriesTable(); 
+        $this->createPaymentMethodsTable();
         $this->createExpensesTable();
         $this->createBudgetsTable();
         $this->insertDefaultCategories();
+        $this->insertDefaultPaymentMethods();
 
         echo "Database tables created successfully!\n";
         echo "Your GODDAMN database setup completed!\n";
@@ -65,22 +67,37 @@ require_once __DIR__ . '/../config/db.php';
         id INTEGER PRIMARY KEY AUTO_INCREMENT,
         user_id INTEGER NOT NULL,
         category_id INTEGER NOT NULL,
+        payment_method_id INTEGER NOT NULL,
         amount DECIMAL(10,2) NOT NULL,
         description TEXT NOT NULL,
         expense_date DATE NOT NULL,
-        payment_method ENUM('cash', 'card', 'digital_wallet', 'bank_transfer') DEFAULT 'cash',
         status BOOLEAN DEFAULT TRUE,
         note VARCHAR (100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
+        FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id) ON DELETE RESTRICT,
         INDEX idx_expense_date (expense_date),
         INDEX idx_user_date (user_id, expense_date)
       )";
       
       $this->pdo->exec($sql);
       echo "Expenses table created successfully!\n";
+    }
+
+    private function createPaymentMethodsTable() {
+      $sql = "CREATE TABLE IF NOT EXISTS payment_methods (
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+        user_id INTEGER NULL,
+        name VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE KEY unique_payment_method (name, user_id)
+      )";
+
+      $this->pdo->exec($sql);
+      echo "Payment methods table created successfully!\n";
     }
       
     private function createBudgetsTable() {
@@ -123,9 +140,26 @@ require_once __DIR__ . '/../config/db.php';
       }
       echo "Default categories inserted\n";
     }
+
+    private function insertDefaultPaymentMethods() {
+      $defaultPaymentMethods = [
+        ['Cash'],
+        ['Card'],
+        ['Digital Wallet'],
+        ['Bank Transfer']
+      ];
+
+      $sql = "INSERT IGNORE INTO payment_methods (name) VALUES (?)";
+      $stmt = $this->pdo->prepare($sql);
+
+      foreach ($defaultPaymentMethods as $method) {
+        $stmt->execute($method);
+      }
+      echo "Default payment methods inserted\n";
+    }
       
     public function dropAllTables() {
-      $tables = ['budgets', 'expenses', 'categories', 'users'];
+      $tables = ['budgets', 'expenses', 'payment_methods', 'categories', 'users'];
       
       // Disable foreign key checks
       $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
