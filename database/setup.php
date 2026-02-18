@@ -1,4 +1,6 @@
 <?php
+
+use PDO;
 require_once __DIR__ . '/../config/db.php';
 
 class DatabaseMigration
