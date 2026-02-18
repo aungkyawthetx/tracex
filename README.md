@@ -64,36 +64,70 @@ Make sure you have installed:
 - **Composer** *(optional)*
 
 ---
+## Installation Guide
 
-## ⚙️ Installation Guide
+Follow these steps to run the project locally.
 
-### 1️⃣ Clone the repository
+### 1. Clone the project
+
 ```bash
-git clone https://github.com/aungkyawthetx/my-spend.git
+git clone <https://github.com/aungkyawthetx/my-spend.git>
 cd my-spend
-2️⃣ Configure database credentials
-Create a .env file or update your configuration file with:
+```
 
-env
-DB_HOST=localhost
-DB_NAME=yourdbname
-DB_USER=root
-DB_PASS=your_password
-3️⃣ Run database setup / migrations
-bash
-php migrations/setup.php
-4️⃣ Start local development server
-bash
-php -S localhost:8000
-📜 License
-This project is not licensed for commercial redistribution.
-All rights reserved.
+### 2. Configure database connection
 
-© Aung Kyaw Thet
+Open `config/db.php` and update your local DB credentials:
 
-👨‍💻 Author
-Aung Kyaw Thet
+```php
+$DB_HOST = "localhost";
+$DB_NAME = "yourdbname";
+$DB_USER = "root";
+$DB_PASS = "your_password";
+```
 
-GitHub: https://github.com/aungkyawthetx
+### 3. Create tables and seed defaults
 
-Email: aungkyawthethimself@gmail.com
+Run:
+
+```bash
+php database/setup.php
+```
+
+Useful options:
+
+```bash
+php database/setup.php --fresh
+php database/setup.php --fresh --kill-connections
+php database/setup.php --no-seed
+```
+
+### 4. Run the application
+
+Start PHP development server:
+
+```bash
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+### 5. (Optional) Watch Tailwind CSS changes
+
+Use this in another terminal while developing UI:
+
+```bash
+npm run watch
+```
+
+---
+
+## Quick Troubleshooting
+
+- If DB connection fails, re-check `config/db.php` values.
+- If styles do not update, run `npm run watch`.
+- If tables are missing or outdated, run `php database/setup.php --fresh`.
