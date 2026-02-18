@@ -1,9 +1,9 @@
-<div class="flex justify-between items-center mb-6">
-  <h2 class="text-2xl font-bold text-gray-800">
+<div class="flex justify-between items-center p-6">
+  <h2 class="text-lg md:text-2xl font-bold text-gray-800">
     <?php if ($editMode): ?>
-      Edit profile details
+      Edit account details
     <?php else: ?>
-      Your Account
+      Account Settings
     <?php endif; ?>
   </h2>
   <?php if(!$editMode): ?>

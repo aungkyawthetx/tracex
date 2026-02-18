@@ -40,7 +40,7 @@
           <div class="space-y-2">
             <div class="flex items-center text-gray-500 text-sm font-medium">
               <i class="fas fa-user-circle mr-2 text-indigo-500"></i>
-              Username
+              Name
             </div>
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p class="text-sm font-semibold text-gray-800">
@@ -66,7 +66,7 @@
             <div class="space-y-2">
               <div class="flex items-center text-gray-500 text-sm">
                 <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
-                Member Since
+                Joined
               </div>
               <div class="p-3 bg-gray-50 rounded-lg">
                 <p class="text-gray-700 font-medium">

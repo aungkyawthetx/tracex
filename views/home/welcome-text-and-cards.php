@@ -40,7 +40,7 @@
                 <p class="text-gray-500 text-sm font-medium">Categories</p>
                 <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= $categoriesCount ?></h3>
                 <p class="text-gray-500 text-sm mt-2">
-                    <i class="fas fa-circle text-blue-500 mr-1"></i> Default Categories
+                    <i class="fas fa-circle text-blue-500 mr-1"></i> Categories
                 </p>
             </div>
             <div class="bg-blue-100 p-3 rounded-full">
