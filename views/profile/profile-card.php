@@ -16,7 +16,7 @@
         
         <!-- Edit Button - Desktop -->
         <div class="mt-6 lg:block hidden">
-          <a href="<?= url('public/profile.php?edit') ?>" onclick="openEditModal()" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium flex items-center justify-center shadow-md hover:shadow-lg">
+          <a href="<?= url('public/profile.php?edit') ?>" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium flex items-center justify-center shadow-md hover:shadow-lg">
             <i class="fas fa-edit mr-2"></i> Edit Profile
           </a>
         </div>
@@ -40,7 +40,7 @@
           <div class="space-y-2">
             <div class="flex items-center text-gray-500 text-sm font-medium">
               <i class="fas fa-user-circle mr-2 text-indigo-500"></i>
-              Username
+              Name
             </div>
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p class="text-sm font-semibold text-gray-800">
@@ -66,7 +66,7 @@
             <div class="space-y-2">
               <div class="flex items-center text-gray-500 text-sm">
                 <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
-                Member Since
+                Joined
               </div>
               <div class="p-3 bg-gray-50 rounded-lg">
                 <p class="text-gray-700 font-medium">

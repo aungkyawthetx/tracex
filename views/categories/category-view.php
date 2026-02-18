@@ -17,7 +17,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
                     </div>
-                    <input type="text" value="<?php if(isset($_GET['search'])) echo $_GET['search'] ?>" id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 sm:text-sm placeholder:italic" placeholder="Search categories...">
+                    <input type="text" value="<?php if(isset($_GET['search'])) echo htmlspecialchars($_GET['search']); ?>" id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 sm:text-sm placeholder:italic" placeholder="Search categories...">
                 </div>
                 <button type="submit" class="bg-sky-600 hover:bg-sky-700 border-2 border-sky-600 text-white px-4 py-2 rounded-full cursor-pointer">Search</button>
                 <a href="category.php" class="border-2 border-gray-300 hover:bg-gray-300 text-gray-500 hover:text-white px-5 py-2 rounded-full cursor-pointer">Reset</a>
@@ -62,14 +62,14 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="shrink-0 h-10 w-10 rounded-full <?= $category_bg[$category['icon']] ?? 'bg-gray-100' ?> flex items-center justify-center">
-                                        <i class="fa-solid fa-<?= $category['icon'] ?>" style="color: <?= $category['color'] ?>"></i>
+                                        <i class="fa-solid fa-<?= htmlspecialchars($category['icon'] ?? 'question') ?>" style="color: <?= htmlspecialchars($category['color'] ?? '#6B7280') ?>"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900"> <?= $category['name'] ?? 'N/A' ?> </div>
+                                        <div class="text-sm font-medium text-gray-900"> <?= htmlspecialchars($category['name'] ?? 'N/A') ?> </div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> <?= $category['description'] ?? 'N/A' ?> </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> <?= htmlspecialchars($category['description'] ?? 'N/A') ?> </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> <?= $expenseCounts[$category['id']] ?? 0 ?> </td>
                             <!-- <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button onclick="openEditCategoryModal()" 

@@ -2,7 +2,7 @@
     <div class="flex flex-col w-64 bg-blue-800">
         <div class="flex items-center justify-center bg-blue-900 px-3 py-3">
             <div class="flex items-center space-x-2">
-                <img src="../../public/assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full flex items-center justify-center">
+                <img src="/public/assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full flex items-center justify-center">
                 <a href="<?= url('public/index.php') ?>" class="text-xl font-bold text-white">
                     MySpend
                 </a>
@@ -22,13 +22,13 @@
                     <i class="fas fa-tags mr-3"></i>
                     Categories
                 </a>
+                <a href="<?= url('public/saving.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/saving.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
+                    <i class="fas fa-piggy-bank mr-3"></i>
+                    Savings
+                </a>
                 <a href="<?= url('public/report.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/report.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
                     <i class="fas fa-chart-pie mr-3"></i>
                     Reports
-                </a>
-                <a href="#" class="flex items-center px-2 py-3 text-sm font-medium text-indigo-200 hover:text-white hover:bg-blue-700 rounded-lg">
-                    <i class="fas fa-users mr-3"></i>
-                    Users
                 </a>
                 <a href="#" class="flex items-center px-2 py-3 text-sm font-medium text-indigo-200 hover:text-white hover:bg-blue-700 rounded-lg">
                     <i class="fas fa-cog mr-3"></i>

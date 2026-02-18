@@ -4,11 +4,17 @@
   require_once __DIR__ . '/../src/bootstrap.php';
   $title = "Categories - MySpend";
 
-  $sql = "SELECT * FROM categories";
-  $params = [];
+  $hasCategoryUserId = tableHasColumn($pdo, 'categories', 'user_id');
+  if ($hasCategoryUserId) {
+    $sql = "SELECT * FROM categories WHERE (user_id IS NULL OR user_id = :user_id)";
+    $params = [':user_id' => $_SESSION['user_id']];
+  } else {
+    $sql = "SELECT * FROM categories";
+    $params = [];
+  }
   $search = $_GET['search'] ?? '';
   if(!empty($search)) {
-    $sql .= " WHERE name LIKE :search OR description LIKE :search";
+    $sql .= " AND (name LIKE :search OR description LIKE :search)";
     $params[':search'] = '%' . $search . '%';
   }
 

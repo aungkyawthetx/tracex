@@ -39,7 +39,8 @@
                 $stmt = $pdo->prepare("UPDATE users SET remember_token = ?, token_expiry = ? WHERE id = ?");
                 $stmt->execute([$token, date('Y-m-d H:i:s', $expiry), $user['id']]);
                 // set cookie
-                setcookie('remember_token', $token, $expiry, '/', '', true, true);
+                $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+                setcookie('remember_token', $token, $expiry, '/', '', $isHttps, true);
             }
             header("Location: ../public/index.php");
             exit();
@@ -62,7 +63,7 @@
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_name'] = $user['name'];
 
-                header("Location: ../index.php");
+                header("Location: ../public/index.php");
                 exit();
             }
         }
@@ -85,7 +86,7 @@
             <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                 Email
             </label>
-            <input class="bg-gray-50 py-2 px-3 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full <?= isset($errors['username']) ? 'border-red-500' : '' ?>" 
+            <input class="bg-gray-50 py-2 px-3 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full <?= isset($errors['email']) ? 'border-red-500' : '' ?>" 
                 id="email" 
                 type="email" 
                 placeholder="yourname@example.com"

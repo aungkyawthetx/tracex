@@ -37,7 +37,7 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> <?= date("M j, Y", strtotime($expense['expense_date'] ?? '')) ?> </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900"> <?= $expense['note'] ?? '-' ?> </div>
+                                <div class="text-sm font-medium text-gray-900"> <?= htmlspecialchars($expense['note'] ?? '-') ?> </div>
                             </td>
 
                             <?php
@@ -78,7 +78,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <?= $expense['payment_method'] ?? ''?>
+                                <?= htmlspecialchars($expense['payment_method'] ?? '') ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"> <?= number_format($expense['amount'] ?? '0', 0) ?> Ks</td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -86,17 +86,17 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button onclick="openEditExpenseModal(this)" 
-                                    data-id="<?= $expense['id'] ?>"
-                                    data-date="<?= $expense['expense_date'] ?>"
-                                    data-amount="<?= $expense['amount'] ?>"
-                                    data-category="<?= $expense['category_id']?>"
-                                    data-payment-method-id="<?= $expense['payment_method_id'] ?>"
-                                    data-note="<?= $expense['note'] ?>"
-                                    data-status="<?= $expense['status'] ?>"
+                                    data-id="<?= (int) ($expense['id'] ?? 0) ?>"
+                                    data-date="<?= htmlspecialchars($expense['expense_date'] ?? '') ?>"
+                                    data-amount="<?= htmlspecialchars((string) ($expense['amount'] ?? '')) ?>"
+                                    data-category="<?= (int) ($expense['category_id'] ?? 0) ?>"
+                                    data-payment-method-id="<?= (int) ($expense['payment_method_id'] ?? 0) ?>"
+                                    data-note="<?= htmlspecialchars($expense['note'] ?? '') ?>"
+                                    data-status="<?= ($expense['status'] ?? '') ?>"
                                     class="text-indigo-600 hover:text-indigo-900 cursor-pointer mr-3"> 
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="openDeleteExpenseModal(<?= $expense['id'] ?>)"
+                                <button onclick="openDeleteExpenseModal(<?= (int) ($expense['id'] ?? 0) ?>)"
                                     class="text-red-600 hover:text-red-900 cursor-pointer">
                                     <i class="fas fa-trash"></i>
                                 </button>

@@ -1,6 +1,6 @@
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-    <p class="text-gray-600">Welcome back, <?= $_SESSION['user_name'] ?? 'Guest'; ?>! Here's what's happening with your expenses today.</p>
+    <p class="text-gray-600">Welcome back, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Guest') ?>! Here's what's happening with your expenses today.</p>
 </div>
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -40,7 +40,7 @@
                 <p class="text-gray-500 text-sm font-medium">Categories</p>
                 <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= $categoriesCount ?></h3>
                 <p class="text-gray-500 text-sm mt-2">
-                    <i class="fas fa-circle text-blue-500 mr-1"></i> Default Categories
+                    <i class="fas fa-circle text-blue-500 mr-1"></i> Categories
                 </p>
             </div>
             <div class="bg-blue-100 p-3 rounded-full">
