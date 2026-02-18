@@ -30,14 +30,14 @@
                     <i class="fas fa-wallet mr-3"></i>
                     Budgets
                 </a>
-                <a href="<?= url('public/report.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/report.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
+                <!-- <a href="<?= url('public/report.php') ?>" class="flex items-center px-2 py-3 text-sm font-medium <?= isActive('public/report.php') ? 'text-white bg-blue-700' : 'text-indigo-200 hover:text-white hover:bg-blue-700' ?> rounded-lg">
                     <i class="fas fa-chart-pie mr-3"></i>
                     Reports
                 </a>
                 <a href="#" class="flex items-center px-2 py-3 text-sm font-medium text-indigo-200 hover:text-white hover:bg-blue-700 rounded-lg">
                     <i class="fas fa-cog mr-3"></i>
                     Settings
-                </a>
+                </a> -->
             </div>
             
             <!-- <div class="mt-auto mb-4">

@@ -1,4 +1,4 @@
-<div class="flex justify-between items-center p-6">
+<div class="flex justify-between items-center mb-6">
   <h2 class="text-lg md:text-2xl font-bold text-gray-800">
     <?php if ($editMode): ?>
       Edit account details

@@ -23,11 +23,11 @@
                 <a href="category.php" class="border-2 border-gray-300 hover:bg-gray-300 text-gray-500 hover:text-white px-5 py-2 rounded-full cursor-pointer">Reset</a>
             </form>
         </div>
-        <div class="flex">
+        <!-- <div class="flex">
             <button class="px-3 py-1 border border-gray-300 cursor-pointer rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                 <i class="fas fa-download mr-1"></i> Export
             </button>
-        </div>
+        </div> -->
     </div>
     
     <div class="overflow-x-auto">

@@ -57,7 +57,7 @@
 
 <div class="flex-1">
   <?php include __DIR__ . '/../views/profile/heading.php'; ?>
-  <div class="max-w-6xl mx-auto space-y-6">
+  <div class="space-y-6">
     <?php 
       include __DIR__ . '/../views/profile/profile-card.php';
       include __DIR__ . '/../views/profile/account-settings.php';
