@@ -1,6 +1,6 @@
 <?php
 if (!isset($title)) {
-  $title = "MySpend";
+  $title = "TraceX";
 }
 ?>
 

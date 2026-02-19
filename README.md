@@ -1,6 +1,6 @@
-# MySpend
+# TraceX
 
-**MySpend** is a lightweight **web-based personal finance tracker** built with **native PHP**.  
+**TraceX** is a lightweight **web-based personal finance tracker** built with **native PHP**.  
 It helps users manage **expenses, categories, budgets, payment methods, and savings goals** in one simple and efficient application.
 
 This project is designed for **learning, portfolio showcase, and personal financial tracking**.

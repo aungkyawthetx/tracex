@@ -4,7 +4,7 @@
   require_once __DIR__ . '/../src/helpers/isLoggedIn.php';
   require_once __DIR__ . '/../src/bootstrap.php';
 
-  $title = "Expenses - MySpend";
+  $title = "Expenses - TraceX";
 
   $hasCategoryUserId = tableHasColumn($pdo, 'categories', 'user_id');
   $hasPaymentMethodUserId = tableHasColumn($pdo, 'payment_methods', 'user_id');

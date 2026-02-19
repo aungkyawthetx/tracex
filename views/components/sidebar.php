@@ -4,7 +4,7 @@
             <div class="flex items-center space-x-2">
                 <img src="/public/assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full flex items-center justify-center">
                 <a href="<?= url('public/index.php') ?>" class="text-xl font-bold text-white">
-                    MySpend
+                    TraceX
                 </a>
             </div>
         </div>

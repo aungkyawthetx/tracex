@@ -3,7 +3,7 @@
     include __DIR__ . '/../src/bootstrap.php';
     require_once __DIR__ . '/../src/helpers/isGuest.php';
 
-    $title = "Sign Up - MySpend";
+    $title = "Sign Up - TraceX";
     ob_start();
     $errors = [];
     $success = false;
@@ -89,7 +89,7 @@
 
 <div class="bg-white rounded-lg shadow-xl p-8">
     <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-blue-600">MySpend </h1>
+        <h1 class="text-3xl font-bold text-blue-600">TraceX </h1>
     </div>
     
     <form method="POST" action="index.php">

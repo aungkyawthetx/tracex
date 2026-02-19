@@ -2,7 +2,7 @@
   include __DIR__ . '/../src/helpers/url.php';
   require_once __DIR__ . '/../src/helpers/isLoggedIn.php';
   require_once __DIR__ . '/../src/bootstrap.php';
-  $title = "Categories - MySpend";
+  $title = "Categories - TraceX";
 
   $hasCategoryUserId = tableHasColumn($pdo, 'categories', 'user_id');
   $sql = "SELECT * FROM categories";

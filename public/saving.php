@@ -4,7 +4,7 @@ require __DIR__ . '/../src/helpers/flash.php';
 require_once __DIR__ . '/../src/helpers/isLoggedIn.php';
 require_once __DIR__ . '/../src/bootstrap.php';
 
-$title = "Savings - MySpend";
+$title = "Savings - TraceX";
 $errors = [];
 
 function getSavingCurrentAmount(PDO $pdo, int $savingId, int $userId): ?float
