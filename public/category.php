@@ -5,18 +5,26 @@
   $title = "Categories - MySpend";
 
   $hasCategoryUserId = tableHasColumn($pdo, 'categories', 'user_id');
+  $sql = "SELECT * FROM categories";
+  $where = [];
+  $params = [];
+
   if ($hasCategoryUserId) {
-    $sql = "SELECT * FROM categories WHERE (user_id IS NULL OR user_id = :user_id)";
-    $params = [':user_id' => $_SESSION['user_id']];
-  } else {
-    $sql = "SELECT * FROM categories";
-    $params = [];
+    $where[] = "(user_id IS NULL OR user_id = :user_id)";
+    $params[':user_id'] = $_SESSION['user_id'];
   }
+
   $search = $_GET['search'] ?? '';
   if(!empty($search)) {
-    $sql .= " AND (name LIKE :search OR description LIKE :search)";
+    $where[] = "(name LIKE :search OR description LIKE :search)";
     $params[':search'] = '%' . $search . '%';
   }
+
+  if (!empty($where)) {
+    $sql .= " WHERE " . implode(' AND ', $where);
+  }
+
+  $sql .= " ORDER BY name ASC";
 
   $cat_stmt = $pdo->prepare($sql);
   $cat_stmt->execute($params);

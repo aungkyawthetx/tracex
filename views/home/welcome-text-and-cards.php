@@ -8,7 +8,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-500 text-sm font-medium">Total Expenses</p>
-                <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= number_format($totalExpenses, 2) ?> MMK</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= number_format($totalExpenses, 2) ?> Ks</h3>
                 <p class="<?= $isUp ? 'text-red-500' : 'text-green-500' ?> text-sm mt-2">
                     <i class="fas fa-arrow-<?= $isUp ? 'up' : 'down' ?>"></i> <?= number_format($percent, 0) ?>% from last month
                 </p>
@@ -23,9 +23,9 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-500 text-sm font-medium">Monthly Budget</p>
-                <h3 class="text-2xl font-bold text-gray-800 mt-1"> 450,000 MMK </h3>
-                <p class="text-red-500 text-sm mt-2">
-                    <i class="fas fa-arrow-down mr-1"></i> 8% over budget
+                <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= number_format($monthlyBudgetTotal, 2) ?> Ks </h3>
+                <p class="<?= $budgetIsUp ? 'text-red-500' : 'text-green-500' ?> text-sm mt-2">
+                    <i class="fas fa-arrow-<?= $budgetIsUp ? 'up' : 'down' ?> mr-1"></i> <?= number_format($budgetPercent, 0) ?>% from last month
                 </p>
             </div>
             <div class="bg-green-100 p-3 rounded-full">
@@ -53,9 +53,9 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-500 text-sm font-medium">Savings</p>
-                <h3 class="text-2xl font-bold text-gray-800 mt-1"> 250,000 MMK </h3>
-                <p class="text-green-500 text-sm mt-2">
-                    <i class="fas fa-arrow-up mr-1"></i> 5% from last month
+                <h3 class="text-2xl font-bold text-gray-800 mt-1"> <?= number_format($monthlySavingsDeposits, 2) ?> Ks </h3>
+                <p class="<?= $savingsIsUp ? 'text-green-500' : 'text-red-500' ?> text-sm mt-2">
+                    <i class="fas fa-arrow-<?= $savingsIsUp ? 'up' : 'down' ?> mr-1"></i> <?= number_format($savingsPercent, 0) ?>% from last month
                 </p>
             </div>
             <div class="bg-purple-100 p-3 rounded-full">

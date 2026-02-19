@@ -110,7 +110,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 <?php if (!empty($savingTransactions)): ?>
                     <?php foreach ($savingTransactions as $txn): ?>
-                        <?php $isDeposit = ($txn['type'] ?? '') === 'deposit'; ?>
+                        <?php $isDeposit = ($txn['type'] ?? '') === 'deposit'; ?>   
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= date('M j, Y g:i A', strtotime($txn['created_at'])) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= htmlspecialchars($txn['saving_name'] ?? '-') ?></td>
