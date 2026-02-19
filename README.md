@@ -71,8 +71,8 @@ Follow these steps to run the project locally.
 ### 1. Clone the project
 
 ```bash
-git clone <https://github.com/aungkyawthetx/my-spend.git>
-cd my-spend
+git clone https://github.com/aungkyawthetx/tracex.git
+cd tracex
 ```
 
 ### 2. Configure database connection
@@ -107,7 +107,7 @@ php database/setup.php --no-seed
 Start PHP development server:
 
 ```bash
-npm run dev
+npm run dev (php-S localhost:8000)
 ```
 
 Then open:
